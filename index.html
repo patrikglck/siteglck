@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scrisori</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://*.cloudfunctions.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; frame-src 'none';">
+   
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="loginScreen" class="screen active">
+        <div class="login-container">
+            <h1>GLCK</h1>
+            <div class="wax-seal"></div>
+            <input type="text" id="username" placeholder="Username" autocomplete="username">
+            <input type="password" id="password" placeholder="Parola" autocomplete="current-password">
+            <button onclick="login()" class="login-btn">Intra</button>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div id="mainApp" class="screen">
+        
+        <!-- Write Letter -->
+        <div id="writeScreen" class="page active">
+            <div class="writing-desk">
+                <h2>Scrie o scrisoare</h2>
+                
+                <div class="recipients-section">
+                    <label>Destinatar:</label>
+                    <div class="recipients-buttons" id="recipientsButtons"></div>
+                    <select id="recipientDropdown" style="display:none;"></select>
+                </div>
+                <div class="recipients-section">
+    <label>Prieteni:</label>
+    <div class="recipients-buttons" id="recipientsButtons"></div>
+    <select id="recipientDropdown" style="display:none;"></select>
+    
+    <!-- ADD FRIEND BUTTON - ADAUGĂ ASTA -->
+    <button onclick="showAddFriendPrompt()" class="add-friend-btn">➕ Adauga prieten</button>
+</div>
+ 
+
+                
+                <div class="mood-section">
+                    <label>Stare</label>
+                    <div class="mood-tags" id="moodTags">
+                        <button class="mood-tag" data-mood="fericit">😊 Fericit</button>
+                        <button class="mood-tag" data-mood="ganditor">💭 Ganditor</button>
+                        <button class="mood-tag" data-mood="trist">😔 Trist</button>
+                        <button class="mood-tag" data-mood="iubitor">❤️ Iubitor</button>
+                        <button class="mood-tag" data-mood="nostalgic">🌙 Nostalgic</button>
+                        <button class="mood-tag" data-mood="motivat">😎 Motivat</button>
+                    </div>
+                </div>
+                
+                <div class="delivery-section">
+                    <label>Livrare:</label>
+                    <select id="deliveryTime">
+                        <option value="now">⚡ Imediat</option>
+                        <option value="tonight">🌙 Diseara (20:00)</option>
+                        <option value="tomorrow">📅 Maine</option>
+                        <option value="custom">🎯 Personalizat</option>
+                    </select>
+                    <input type="datetime-local" id="customDelivery" style="display:none;">
+                </div>
+                
+                <div class="letter-paper">
+                    <textarea id="messageText" placeholder="Scrie mesajul tau aici..."></textarea>
+                </div>
+                
+    <div class="photo-upload">
+    <input type="file" id="photoInput" accept="image/*" multiple>
+    <label for="photoInput">
+        📎 Adaugă poze <small><small>soon</small></small>
+    </label>
+    <div id="photoPreview"></div>
+</div>
+
+                
+                <button onclick="sendLetter()" class="send-btn">📮 Trimite Scrisoarea</button>
+            </div>
+        </div>
+
+        <!-- Inbox -->
+        <div id="inboxScreen" class="page">
+            <div class="desk-surface">
+                <h2>Inbox</h2>
+                <div id="inboxList" class="envelopes-container"></div>
+            </div>
+        </div>
+
+        <!-- Archive -->
+        <div id="archiveScreen" class="page">
+            <div class="journal-page">
+                <h2>Arhiva</h2>
+                <div id="archiveList"></div>
+            </div>
+        </div>
+
+        <!-- Letter Modal -->
+        <div id="letterModal" class="modal">
+            <div class="modal-content">
+                <span class="close-modal" onclick="closeLetterModal()">&times;</span>
+                <div id="letterContent"></div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="bottom-nav">
+           <button onclick="showPage('write'); return false;" class="nav-btn active">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12 19l7-7 3 3-7 7-3-3z"/>
+        <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/>
+        <path d="M2 2l7.586 7.586"/>
+    </svg>
+    <span>Scrie</span>
+</button>
+            <button onclick="showPage('inbox'); return false;" class="nav-btn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="2" y="4" width="20" height="16" rx="2"/>
+                    <path d="M22 7l-10 7L2 7"/>
+                </svg>
+                <span>Inbox</span>
+            </button>
+            <button onclick="showPage('archive'); return false;" class="nav-btn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                </svg>
+                <span>Arhiva</span>
+            </button>
+        </nav>
+    </div>
+    
+    <script type="module" src="app.js"></script>
+
+
+</body>
+</html>
